@@ -28,7 +28,7 @@ jobs:
         
         - name: Terraform Apply
           id: apply
-          run: terraform apply --auto-approve true
+          run: terraform apply --auto-approve
 
         - name: write instance ip to inventory
           id: write_to_invetory
