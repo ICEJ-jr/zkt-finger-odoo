@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/provision-ec2.yaml'
+      - 'ansible/playbook.yaml'
 
 jobs:
   deploy:
