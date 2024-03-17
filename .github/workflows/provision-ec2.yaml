@@ -29,10 +29,6 @@ jobs:
         - name: Terraform Apply
           id: apply
           run: terraform apply --auto-approve
-
-        - name: write instance ip to inventory
-          id: write_to_invetory
-          run: PUBLIC_IP=$(terraform output -raw instance_public_ip) && sed -i "s/${{ vars.SUBDOMAIN }}.schoolall.io/$PUBLIC_IP/g" ../ansible/inventory.ini
           
         - name: output instance public ip
           id: public_ip
