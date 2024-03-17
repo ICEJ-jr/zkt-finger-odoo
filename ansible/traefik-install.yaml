@@ -1,0 +1,38 @@
+---
+- name: Install Traefik 
+  hosts: mocks_server
+  become: yes
+  gather_facts: false
+
+
+  tasks:
+    - name: Populate Apt's Cache with package definitions to avoid "no such package" errors
+      apt:
+        update_cache: true
+
+    - name: Run command to print working directory
+      command: pwd  # Use 'shell' instead of 'command' if you're on a shell that supports it
+      register: pwd_output
+
+    # - name: Display working directory
+    #   debug:
+    #     msg: "Working directory is {{ pwd_output.stdout }}"
+
+    - name: Copy traefik dir
+      copy:
+        src: ../traefik  # Path to the folder on the control node
+        dest: .  # Path to the destination folder on the managed node
+        # remote_src: yes  # Indicates that the source is on the control node
+
+
+
+    - name: Run mocks Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ pwd_output.stdout }}/traefik" # Specify the directory containing the Docker Compose file
+        # project_name: mocks
+        files: docker-compose.yaml  # Specify the name of the Docker Compose file
+        # state: present  # Ensure the containers are running
+        # detached: yes  # Run containers in detached mode
+        build: always  # Build images before starting containers
+        # env_files: .env  # Optionally, specify an env file containing environment variables
+        # Specify any additional options or arguments for the Docker Compose command
