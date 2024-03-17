@@ -1,0 +1,57 @@
+---
+- name: Configure DNS EC2 instanace
+  hosts: local
+  become: yes
+  vars:
+    domains:
+      - domain: "{{ lookup('env', 'SCHOOLALL_DOMAIN') }}"
+        subdomain: "{{ lookup('env', 'SCHOOLALL_DOCS_SUBDOMAIN') }}"
+        api_key: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_KEY') }}"
+        api_secret: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_SECRET') }}"
+      - domain: "{{ lookup('env', 'SCHOOLALL_DOMAIN') }}"
+        subdomain: "{{ lookup('env', 'SCHOOLALL_MOCK_SUBDOMAIN') }}"
+        api_key: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_KEY') }}"
+        api_secret: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_SECRET') }}"
+      - domain: "{{ lookup('env', 'ICEJ_DOMAIN') }}"
+        subdomain: "{{ lookup('env', 'ICEJ_DOCS_SUBDOMAIN') }}"
+        api_key: "{{ lookup('env', 'ICEJ_GODDADY_API_KEY') }}"
+        api_secret: "{{ lookup('env', 'ICEJ_GODDADY_API_SECRET') }}"
+      - domain: "{{ lookup('env', 'ICEJ_DOMAIN') }}"
+        subdomain: "{{ lookup('env', 'ICEJ_MOCK_SUBDOMAIN') }}"
+        api_key: "{{ lookup('env', 'ICEJ_GODDADY_API_KEY') }}"
+        api_secret: "{{ lookup('env', 'ICEJ_GODDADY_API_SECRET') }}"
+
+    
+  tasks:
+    - name: Populate Apt's Cache with package definitions to avoid "no such package" errors
+      apt:
+        update_cache: true
+
+    - name: Install python3-pip package
+      become: yes
+      package:
+        name: python3-pip
+        state: present
+
+    - name: Install pexpect package
+      pip:
+        name: pexpect
+
+
+    - name: Install godaddypy package
+      pip:
+        name: godaddypy
+
+    - name: Install godaddypy package
+      pip:
+        name: configloader
+
+    - name: Setup dns record for subdomains
+      godaddy_record:
+        api_key: "{{item.api_key}}"
+        api_secret: "{{item.api_secret}}"
+        domain: "{{item.domain}}"
+        name: "{{item.subdomain}}"
+        type: "A"
+        data: "{{server_ip}}"
+      loop: "{{ domains }}"

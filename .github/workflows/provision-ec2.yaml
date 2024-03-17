@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults: 
+      run:
+        working-directory: ./terraform
     steps:
         - uses: actions/checkout@v4
         - uses: hashicorp/setup-terraform@v3
@@ -23,18 +26,36 @@ jobs:
           id: apply
           run: terraform apply --auto-approve true
 
-    #   - name: Terraform Plan
-    #     uses: terraform-actions/terraform-plan@v3
+        - name: write instance ip to inventory
+          id: write_to_invetory
+          run: PUBLIC_IP=$(terraform output -raw instance_public_ip) && sed -i "s/${{ vars.SUBDOMAIN }}.schoolall.io/$PUBLIC_IP/g" ../ansible/inventory.ini
+          
+        - name: output instance public ip
+          id: public_ip
+          run: |
+            echo "public_ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
+        
+        - name:  configure-dns
+          uses: dawidd6/action-ansible-playbook@v2
+          env:
+            PUBLIC_IP: ${{ steps.public_ip.outputs.public_ip }}
+            SCHOOLALL_GODDADY_API_KEY: ${{secrets.SCHOOLALL_GODDADY_API_KEY}}
+            SCHOOLALL_GODDADY_API_SECRET: ${{ secrets.SCHOOLALL_GODDADY_API_SECRET }}
+            ICEJ_GODDADY_API_KEY: ${{secrets.ICEJ_GODDADY_API_KEY}}
+            ICEJ_GODDADY_API_SECRET: ${{ secrets.ICEJ_GODDADY_API_SECRET }}
+            SCHOOLALL_DOMAIN: ${{ vars.SCHOOLALL_DOMAIN }}
+            SCHOOLALL_DOCS_SUBDOMAIN: ${{ vars.SCHOOLALL_SUBDOMAIN }}
+            SCHOOLALL_MOCK_SUBDOMAIN: ${{ vars.SCHOOLALL_SUBDOMAIN }}
+            ICEJ_DOMAIN: ${{ vars.ICEJ_DOMAIN }}
+            ICEJ_MOCK_SUBDOMAIN: ${{ vars.ICEJ_SUBDOMAIN }}
+            ICEJ_DOCS_SUBDOMAIN: ${{ vars.ICEJ_SUBDOMAIN }}
+          with:
+            playbook: playbook.yaml
+            directory: ./ansible
+            inventory: |
+              [local]
+              localhost ansible_connection=local
 
-    #   - name: Terraform Apply
-    #     uses: terraform-actions/terraform-apply@v3
-    #     with:
-    #       auto-approve: true
+              [local:vars]
+              server_ip={{ lookup('env', 'PUBLIC_IP') }}
 
-        # - name: Run Ansible Playbook
-        #   uses: ansible/ansible-playbook@v2
-        #   with:
-        #     playbook: path/to/your/playbook.yml
-        #   env:
-        #     EC2_IP: ${{ steps.get_ec2.outputs.ip }}
-        #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
