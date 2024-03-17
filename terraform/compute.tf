@@ -16,7 +16,7 @@ resource "random_id" "mock_node" {
 
 resource "aws_key_pair" "mock_node_id" {
   key_name   = var.key_name
-  public_key = file(var.public_key_path)
+  public_key = var.public_key
 }
 
 resource "aws_instance" "mock_server" {

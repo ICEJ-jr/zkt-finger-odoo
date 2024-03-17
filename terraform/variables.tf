@@ -28,8 +28,10 @@ variable "key_name" {
   type    = string
 }
 
-variable "public_key_path" {
+
+variable "public_key" {
   type    = string
+  sensitive = true
 }
 
 variable "ami_owners" {
