@@ -44,11 +44,11 @@ jobs:
             ICEJ_GODDADY_API_KEY: ${{secrets.ICEJ_GODDADY_API_KEY}}
             ICEJ_GODDADY_API_SECRET: ${{ secrets.ICEJ_GODDADY_API_SECRET }}
             SCHOOLALL_DOMAIN: ${{ vars.SCHOOLALL_DOMAIN }}
-            SCHOOLALL_DOCS_SUBDOMAIN: ${{ vars.SCHOOLALL_SUBDOMAIN }}
-            SCHOOLALL_MOCK_SUBDOMAIN: ${{ vars.SCHOOLALL_SUBDOMAIN }}
+            SCHOOLALL_DOCS_SUBDOMAIN: ${{ vars.SCHOOLALL_DOCS_SUBDOMAIN }}
+            SCHOOLALL_MOCK_SUBDOMAIN: ${{ vars.SCHOOLALL_MOCK_SUBDOMAIN }}
             ICEJ_DOMAIN: ${{ vars.ICEJ_DOMAIN }}
-            ICEJ_MOCK_SUBDOMAIN: ${{ vars.ICEJ_SUBDOMAIN }}
-            ICEJ_DOCS_SUBDOMAIN: ${{ vars.ICEJ_SUBDOMAIN }}
+            ICEJ_MOCK_SUBDOMAIN: ${{ vars.ICEJ_MOCK_SUBDOMAIN }}
+            ICEJ_DOCS_SUBDOMAIN: ${{ vars.ICEJ_DOCS_SUBDOMAIN }}
           with:
             playbook: playbook.yaml
             directory: ./ansible
