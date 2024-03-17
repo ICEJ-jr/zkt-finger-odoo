@@ -1,0 +1,40 @@
+name: Deploy to EC2, install Docker and configure custom DNS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: "1.7.1"
+            cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        
+        - name: Terraform Init
+          id: init
+          run: terraform init
+        
+        - name: Terraform Apply
+          id: apply
+          run: terraform apply --auto-approve true
+
+    #   - name: Terraform Plan
+    #     uses: terraform-actions/terraform-plan@v3
+
+    #   - name: Terraform Apply
+    #     uses: terraform-actions/terraform-apply@v3
+    #     with:
+    #       auto-approve: true
+
+        # - name: Run Ansible Playbook
+        #   uses: ansible/ansible-playbook@v2
+        #   with:
+        #     playbook: path/to/your/playbook.yml
+        #   env:
+        #     EC2_IP: ${{ steps.get_ec2.outputs.ip }}
+        #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

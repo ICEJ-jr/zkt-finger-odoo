@@ -3,7 +3,7 @@ terraform {
     organization = "icej-org"
 
     workspaces {
-      name = "odoo-16"
+      name = "jay-mocks-server"
     }
   }
 }
