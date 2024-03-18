@@ -1,6 +1,6 @@
 variable "vpc_cidr" {
   type    = string
-  default = "10.129.0.0/16"
+  default = "10.130.0.0/16"
 }
 
 variable "main_instance_type" {
@@ -10,7 +10,7 @@ variable "main_instance_type" {
 
 variable "main_vol_size" {
   type    = number
-  default = 30
+  default = 15
 }
 
 variable "main_instance_count" {

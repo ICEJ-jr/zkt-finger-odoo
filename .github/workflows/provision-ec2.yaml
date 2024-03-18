@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - terraform
     paths:
       - 'terraform/**'
       - '.github/workflows/provision-ec2.yaml'
