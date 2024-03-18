@@ -1,9 +1,9 @@
 terraform {
   cloud {
-    organization = "icej-org"
+    organization = "denno2340"
 
     workspaces {
-      name = "jay-mocks-server"
+      name = "denno-workspace"
     }
   }
 }
