@@ -9,23 +9,23 @@ data "aws_ami" "server_ami" {
   }
 }
 
-resource "random_id" "mock_node" {
+resource "random_id" "zkt_node" {
   byte_length = 2
   count       = var.main_instance_count
 }
 
-resource "aws_key_pair" "mock_node_id" {
+resource "aws_key_pair" "zkt_node_id" {
   key_name   = var.key_name
   public_key = var.public_key
 }
 
-resource "aws_instance" "mock_server" {
+resource "aws_instance" "zkt_server" {
   count = var.main_instance_count
   instance_type          = var.main_instance_type
   ami                    = data.aws_ami.server_ami.id
-  key_name               = aws_key_pair.mock_node_id.id
-  vpc_security_group_ids = [aws_security_group.mock_sg.id]
-  subnet_id = aws_subnet.mock_server_public_subnet[count.index].id # aws_subnet.mock_public_subnet[count.index].id
+  key_name               = aws_key_pair.zkt_node_id.id
+  vpc_security_group_ids = [aws_security_group.zkt_sg.id]
+  subnet_id = aws_subnet.zkt_server_public_subnet[count.index].id # aws_subnet.zkt_public_subnet[count.index].id
   user_data = file("./install_docker.sh")
   
   root_block_device {
@@ -37,6 +37,6 @@ resource "aws_instance" "mock_server" {
   # }
 
   tags = {
-    Name = "mock-server-${random_id.mock_node[count.index].dec}"
+    Name = "zkt-server-${random_id.zkt_node[count.index].dec}"
   }
 }
