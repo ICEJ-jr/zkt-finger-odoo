@@ -4,22 +4,11 @@
   become: yes
   vars:
     domains:
-      - domain: "{{ lookup('env', 'SCHOOLALL_DOMAIN') }}"
-        subdomain: "{{ lookup('env', 'SCHOOLALL_DOCS_SUBDOMAIN') }}"
-        api_key: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_KEY') }}"
-        api_secret: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_SECRET') }}"
-      - domain: "{{ lookup('env', 'SCHOOLALL_DOMAIN') }}"
-        subdomain: "{{ lookup('env', 'SCHOOLALL_MOCK_SUBDOMAIN') }}"
-        api_key: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_KEY') }}"
-        api_secret: "{{ lookup('env', 'SCHOOLALL_GODDADY_API_SECRET') }}"
-      - domain: "{{ lookup('env', 'ICEJ_DOMAIN') }}"
-        subdomain: "{{ lookup('env', 'ICEJ_DOCS_SUBDOMAIN') }}"
-        api_key: "{{ lookup('env', 'ICEJ_GODDADY_API_KEY') }}"
-        api_secret: "{{ lookup('env', 'ICEJ_GODDADY_API_SECRET') }}"
-      - domain: "{{ lookup('env', 'ICEJ_DOMAIN') }}"
-        subdomain: "{{ lookup('env', 'ICEJ_MOCK_SUBDOMAIN') }}"
-        api_key: "{{ lookup('env', 'ICEJ_GODDADY_API_KEY') }}"
-        api_secret: "{{ lookup('env', 'ICEJ_GODDADY_API_SECRET') }}"
+      - domain: "{{ lookup('env', 'DOMAIN') }}"
+        subdomain: "{{ lookup('env', 'ZKTSUBDOMAIN') }}"
+        api_key: "{{ lookup('env', 'GODDADY_API_KEY') }}"
+        api_secret: "{{ lookup('env', 'GODDADY_API_SECRET') }}"
+
 
     
   tasks:
