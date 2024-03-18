@@ -5,7 +5,7 @@
   vars:
     domains:
       - domain: "{{ lookup('env', 'DOMAIN') }}"
-        subdomain: "{{ lookup('env', 'ZKTSUBDOMAIN') }}"
+        subdomain: "{{ lookup('env', 'ZKT_SUBDOMAIN') }}"
         api_key: "{{ lookup('env', 'GODDADY_API_KEY') }}"
         api_secret: "{{ lookup('env', 'GODDADY_API_SECRET') }}"
 
