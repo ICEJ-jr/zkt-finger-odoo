@@ -42,8 +42,7 @@ jobs:
             GODDADY_API_KEY: ${{secrets.GODDADY_API_KEY}}
             GODDADY_API_SECRET: ${{ secrets.GODDADY_API_SECRET }}
             DOMAIN: ${{ vars.DOMAIN }}
-            MOCK_SUBDOMAIN: ${{ vars.MOCK_SUBDOMAIN }}
-            DOCS_SUBDOMAIN: ${{ vars.DOCS_SUBDOMAIN }}
+            ZKT_SUBDOMAIN: ${{ vars.ZKT_SUBDOMAIN }}
           with:
             playbook: playbook.yaml
             directory: ./ansible
