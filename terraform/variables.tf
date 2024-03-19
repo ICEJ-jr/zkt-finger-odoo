@@ -25,18 +25,18 @@ output "instance_public_ip" {
 }
 
 variable "key_name" {
-  type    = string
+  type = string
 }
 
 
 variable "public_key" {
-  type    = string
+  type      = string
   sensitive = true
 }
 
 variable "ami_owners" {
-  type = list(string)
-  default = []
+  type      = list(string)
+  default   = []
   sensitive = true
 }
 
