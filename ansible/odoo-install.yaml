@@ -1,0 +1,96 @@
+---
+- name: Install Odoo 
+  hosts: odoo_server
+  become: yes
+  gather_facts: false
+  vars:    
+    odoo_env_vars:
+      - key: "POSTGRES_USER"
+        value: "{{ lookup('env', 'POSTGRES_USER') }}"
+      - key: "HOSTNAME0"
+        value: "{{ lookup('env', 'HOSTNAME0') }}"
+      - key: "POSTGRES_PASSWORD"
+        value: "{{ lookup('env', 'POSTGRES_PASSWORD') }}"
+      - key: "POSTGRES_DB"
+        value: "{{ lookup('env', 'POSTGRES_DB') }}"
+      - key: "PGDATA"
+        value: "{{ lookup('env', 'PGDATA') }}"
+      - key: "ODOO_PORT"
+        value: "{{ lookup('env', 'ODOO_PORT') }}"
+      - key: "ODOO_LIVE_CHAT_PORT"
+        value: "{{ lookup('env', 'ODOO_LIVE_CHAT_PORT') }}"
+      - key: "MOUNT_PATH"
+        # value: "{{ lookup('env', 'MOUNT_PATH') }}"
+
+    odoo_addons:
+      - hr_zk_attendance-14.0.1.0.1.zip
+
+  tasks:
+    - name: Populate Apt's Cache with package definitions to avoid "no such package" errors
+      apt:
+        update_cache: true
+
+    - name: Run command to print working directory
+      command: pwd  # Use 'shell' instead of 'command' if you're on a shell that supports it
+      register: pwd_output
+
+    - name: Install unzip package
+      become: yes
+      package:
+        name: unzip
+        state: present
+
+    - name: Copy odoo dir
+      copy:
+        src: ../odoo  # Path to the folder on the control node
+        dest: .  # Path to the destination folder on the managed node
+        # remote_src: yes  # Indicates that the source is on the control node
+
+    - name: Copy addons dir
+      copy:
+        src: ../addons  # Path to the folder on the control node
+        dest: .  # Path to the destination folder on the managed node
+        # remote_src: yes  # Indicates that the source is on the control node
+
+    # - name: Download the Odoo accounting module
+    #   get_url:
+    #     url: "http://example.com/your_zip_file.zip"
+    #     dest: "/path/to/destination/your_zip_file.zip"
+
+    - name: create cert dir
+      file:
+        path: "{{ pwd_output.stdout }}/odoo/addons/"
+        state: directory
+
+    - name: Unzip addons
+      unarchive:
+        src: "{{ pwd_output.stdout }}/addons/{{ item }}"
+        dest: "{{ pwd_output.stdout }}/odoo/addons/"
+        # creates: "{{ pwd_output.stdout }}/odoo/addons/"
+        remote_src: true
+        # extra_opts: "--overwrite"
+      loop: "{{ odoo_addons }}"
+    
+    - name: Ensure .env file exists in odoo dir
+      file:
+        path: ./odoo/.env
+        state: touch
+
+    - name: Write environment variables to .env file in odoo dir
+      lineinfile:
+        path: ./odoo/.env
+        line: "{{ item.key }}={{ item.value }}"
+        create: yes
+      loop: "{{ odoo_env_vars }}"
+    
+        
+    - name: Run Odoo Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ pwd_output.stdout }}/odoo" # Specify the directory containing the Docker Compose file
+        # project_name: odoo
+        files: docker-compose.yml  # Specify the name of the Docker Compose file
+        # state: present  # Ensure the containers are running
+        # detached: yes  # Run containers in detached mode
+        build: always  # Build images before starting containers
+        env_files: .env  # Optionally, specify an env file containing environment variables
+        # Specify any additional options or arguments for the Docker Compose command

@@ -1,0 +1,45 @@
+name: install odoo
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/install-odoo.yaml'
+      - 'ansible/**'
+      - 'odoo/**'
+      - 'cert/**'
+      - 'addons/**'
+  workflow_run:
+    workflows: 
+      - provision ec2
+    types:
+      - completed
+
+jobs:
+  # needs: "provision ec2"
+  install-odoo:
+    runs-on: ubuntu-latest
+    # defaults: 
+    #   run:
+    #     working-directory: ./ansible
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dawidd6/action-ansible-playbook@v2
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          PGDATA: ${{ secrets.PGDATA }}
+          ODOO_LIVE_CHAT_PORT: ${{ vars.ODOO_LIVE_CHAT_PORT }}
+          ODOO_PORT: ${{ vars.ODOO_PORT }}
+          HOSTNAME0: ${{ vars.HOSTNAME0 }}
+          # MOUNT_PATH: ${{ vars.MOUNT_PATH }}
+        with:
+          playbook: odoo-install.yaml
+          directory: ./ansible
+          key: ${{secrets.SSH_EC2_PRIVATE_KEY}}
+          options:
+            -i inventory.ini
+
+            

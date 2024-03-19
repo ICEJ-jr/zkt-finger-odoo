@@ -1,6 +1,6 @@
 ---
 - name: Install Traefik 
-  hosts: mocks_server
+  hosts: odoo_server
   become: yes
   gather_facts: false
 
