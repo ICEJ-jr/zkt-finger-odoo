@@ -1,0 +1,56 @@
+name: Deploy to EC2, install Docker and configure custom DNS
+
+on:
+  push:
+    branches:
+      - main
+      - terraform
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/provision-ec2.yaml'
+      - 'ansible/playbook.yaml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults: 
+      run:
+        working-directory: terraform
+    steps:
+        - uses: actions/checkout@v4
+        - uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: "1.7.1"
+            cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        
+        - name: Terraform Init
+          id: init
+          run: terraform init
+        
+        - name: Terraform Apply
+          id: apply
+          run: terraform apply --auto-approve
+          
+        - name: output instance public ip
+          id: public_ip
+          run: |
+            echo "public_ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
+        
+        - name:  configure-dns
+          uses: dawidd6/action-ansible-playbook@v2
+          env:
+            PUBLIC_IP: ${{ steps.public_ip.outputs.public_ip }}
+            GODDADY_API_KEY: ${{secrets.GODDADY_API_KEY}}
+            GODDADY_API_SECRET: ${{ secrets.GODDADY_API_SECRET }}
+            DOMAIN: ${{ vars.DOMAIN }}
+            ZKT_SUBDOMAIN: ${{ vars.ZKT_SUBDOMAIN }}
+          with:
+            playbook: playbook.yaml
+            directory: ./ansible
+            inventory: |
+              [local]
+              localhost ansible_connection=local
+
+              [local:vars]
+              server_ip={{ lookup('env', 'PUBLIC_IP') }}
+

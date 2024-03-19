@@ -1,0 +1,36 @@
+name: install traefik
+on:
+  push:
+    branches:
+      - main
+      - terraform
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/install-traefik.yaml'
+      - 'ansible/**'
+      - 'traefik/**'
+
+  workflow_run:
+    workflows: 
+      - provision ec2
+    types:
+      - completed
+
+jobs:
+  # needs: "provision ec2"
+  install-traefik:
+    runs-on: ubuntu-latest
+    # defaults: 
+    #   run:
+    #     working-directory: ./ansible
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: traefik-install.yaml
+          directory: ./ansible
+          key: ${{secrets.SSH_EC2_PRIVATE_KEY}}
+          options:
+            -i inventory.ini
+
+            
