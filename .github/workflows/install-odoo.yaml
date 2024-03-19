@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - terraform
     paths:
       - 'terraform/**'
       - '.github/workflows/install-odoo.yaml'
