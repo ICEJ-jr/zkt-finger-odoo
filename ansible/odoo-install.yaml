@@ -19,7 +19,7 @@
         value: "{{ lookup('env', 'ODOO_PORT') }}"
       - key: "ODOO_LIVE_CHAT_PORT"
         value: "{{ lookup('env', 'ODOO_LIVE_CHAT_PORT') }}"
-      - key: "MOUNT_PATH"
+      # - key: "MOUNT_PATH"
         # value: "{{ lookup('env', 'MOUNT_PATH') }}"
 
     odoo_addons:
