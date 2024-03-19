@@ -11,7 +11,7 @@ services:
     volumes:
         - ./postgresql:/var/lib/postgresql/data
 
-  odoo14:
+  odoo:
     image: odoo:14
     container_name: odoo
     user: root
