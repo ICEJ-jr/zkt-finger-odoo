@@ -24,7 +24,7 @@ services:
     command: --
 #    command: odoo scaffold /mnt/extra-addons/custom_module
     environment:
-      - HOST=${HOSTNAME0}
+      - HOST=db
       - USER=${POSTGRES_USER}
       - PASSWORD=${POSTGRES_PASSWORD}
     volumes:
