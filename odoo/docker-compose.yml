@@ -35,6 +35,7 @@ services:
       # - ./entrypoint.sh:/entrypoint.sh   # if you want to install additional Python packages, uncomment this line!
       - ./addons:/mnt/extra-addons
       - ./config:/etc/odoo
+      - ./odoo-data:/var/lib/odoo
     networks:
       - traefik
       - postgres

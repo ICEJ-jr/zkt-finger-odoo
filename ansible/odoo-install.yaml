@@ -23,7 +23,10 @@
         # value: "{{ lookup('env', 'MOUNT_PATH') }}"
 
     odoo_addons:
+      - hr_biometric_machine_zk_demo-14.0.1.0.zip
       - hr_zk_attendance-14.0.1.0.1.zip
+      - odoo-biometric-attendance-14.0.1.0.zip
+      - om_account_accountant-14.0.8.1.0.zip
 
   tasks:
     - name: Populate Apt's Cache with package definitions to avoid "no such package" errors
